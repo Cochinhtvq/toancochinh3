@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Công Thức Lượng Giác - Toán THPT</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX CSS & JS for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981'
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'shake': 'shake 0.4s ease-in-out',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)' },
+                            '100%': { boxShadow: '0 0 30px rgba(236, 72, 153, 0.7)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-8px)' },
+                            '40%, 80%': { transform: 'translateX(8px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a, #020617);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 27, 75, 0.65);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .option-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: #ec4899;
+            box-shadow: 0 6px 20px -2px rgba(236, 72, 153, 0.4);
+            background: rgba(88, 28, 135, 0.4);
+        }
+        .katex-display {
+            margin: 0.5em 0 !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 0;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a855f7;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-slate-100 flex flex-col justify-between min-h-screen p-3 md:p-6">
+
+    <!-- HEADER -->
+    <header class="max-w-4xl mx-auto w-full flex items-center justify-between py-3 px-5 glass-card rounded-2xl mb-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 animate-float">
+                <i class="fa-solid fa-calculator text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-base md:text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-300">
+                    TRIGONOMETRY FORMULAS
+                </h1>
+                <p class="text-xs text-slate-400">Các Công Thức Lượng Giác - Toán THPT</p>
+            </div>
+        </div>
+
+        <button id="sound-toggle-btn" class="w-10 h-10 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-purple-500/30 flex items-center justify-center transition-all shadow-md" title="Bật/Tắt âm thanh">
+            <i class="fa-solid fa-volume-high text-purple-400" id="sound-icon"></i>
+        </button>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl mx-auto w-full flex-grow flex items-center justify-center relative">
+
+        <!-- 1. START SCREEN -->
+        <div id="start-screen" class="w-full glass-card rounded-3xl p-6 md:p-10 text-center relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="inline-block p-4 rounded-full bg-slate-800/90 border border-purple-500/40 mb-4 shadow-xl">
+                <span class="text-4xl">📐</span>
+            </div>
+
+            <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-3">
+                Thử Thách Công Thức Lượng Giác
+            </h2>
+            <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-6">
+                Luyện tập và làm chủ toàn bộ các công thức cộng, nhân đôi, hạ bậc, biến đổi tổng thành tích & tích thành tổng!
+            </p>
+
+            <!-- Structure Badge Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8 text-left">
+                <div class="p-4 rounded-2xl bg-purple-950/40 border border-purple-500/30 backdrop-blur-sm">
+                    <div class="flex items-center space-x-2 text-purple-300 font-semibold mb-1">
+                        <i class="fa-solid fa-brain"></i>
+                        <span>Phân bổ 10 câu</span>
+                    </div>
+                    <p class="text-xs text-slate-400">3 Nhận biết | 5 Thông hiểu | 2 Vận dụng</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-pink-950/40 border border-pink-500/30 backdrop-blur-sm">
+                    <div class="flex items-center space-x-2 text-pink-300 font-semibold mb-1">
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span>Thời gian</span>
+                    </div>
+                    <p class="text-xs text-slate-400">60 giây suy luận cho mỗi câu hỏi</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 backdrop-blur-sm">
+                    <div class="flex items-center space-x-2 text-cyan-300 font-semibold mb-1">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Combo Streak</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Đúng liên tiếp nhân thêm điểm thưởng lớn</p>
+                </div>
+            </div>
+
+            <button id="start-btn" class="w-full md:w-auto px-10 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-extrabold text-lg rounded-2xl shadow-xl shadow-purple-600/30 transform hover:-translate-y-1 transition-all">
+                <i class="fa-solid fa-play mr-2"></i> Bắt Đầu Ngay
+            </button>
+        </div>
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="w-full glass-card rounded-3xl p-5 md:p-8 hidden relative">
+            <!-- Header Bar inside Quiz -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-700/60">
+                <div class="flex items-center space-x-3">
+                    <span id="question-count" class="px-3 py-1.5 rounded-xl bg-purple-950/90 border border-purple-500/50 text-purple-300 font-bold text-sm">
+                        Câu 1/10
+                    </span>
+                    <span id="difficulty-badge" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold">
+                        Nhận biết
+                    </span>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1.5 text-amber-400 font-bold text-sm bg-amber-950/40 px-3 py-1 rounded-xl border border-amber-500/30">
+                        <i class="fa-solid fa-fire text-amber-500 animate-pulse"></i>
+                        <span>Streak: <span id="streak-count">0</span></span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 text-purple-300 font-bold text-sm bg-purple-950/40 px-3 py-1 rounded-xl border border-purple-500/30">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <span>Điểm: <span id="score-display">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timer Progress Bar -->
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-6 border border-purple-900/40">
+                <div id="timer-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="mb-6 bg-slate-900/80 p-5 rounded-2xl border border-purple-500/20 min-h-[110px] flex items-center shadow-inner">
+                <div id="question-text" class="text-base md:text-lg font-medium text-slate-100 leading-relaxed w-full">
+                    <!-- LaTeX question here -->
+                </div>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-6">
+                <!-- Dynamic options -->
+            </div>
+
+            <!-- Solution Explanation Box -->
+            <div id="explanation-box" class="hidden mt-4 p-4 rounded-2xl bg-slate-900/90 border border-purple-500/40 text-sm shadow-xl">
+                <div class="flex items-center space-x-2 text-pink-400 font-bold mb-2">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Lời giải chi tiết:</span>
+                </div>
+                <div id="explanation-content" class="text-slate-300 space-y-2 leading-relaxed">
+                    <!-- Math Solution latex -->
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button id="next-btn" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                        <span>Câu tiếp theo</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="w-full glass-card rounded-3xl p-6 md:p-10 text-center hidden">
+            <div class="inline-block p-4 rounded-full bg-slate-800 border border-purple-500/50 mb-4 shadow-2xl">
+                <i class="fa-solid fa-crown text-5xl text-amber-400 animate-pulse"></i>
+            </div>
+
+            <h2 class="text-3xl font-extrabold text-white mb-1">Hoàn Thành Bài Thi!</h2>
+            <p id="rank-title" class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+                Danh hiệu: Đang tính toán...
+            </p>
+
+            <!-- Results Summary Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                <div class="p-4 rounded-2xl bg-purple-950/40 border border-purple-500/30">
+                    <span class="text-xs text-slate-400 block mb-1">Tổng điểm</span>
+                    <span id="final-score" class="text-2xl font-black text-amber-400">0</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-pink-950/40 border border-pink-500/30">
+                    <span class="text-xs text-slate-400 block mb-1">Số câu đúng</span>
+                    <span id="correct-count" class="text-2xl font-black text-purple-300">0/10</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/30">
+                    <span class="text-xs text-slate-400 block mb-1">Thời gian làm</span>
+                    <span id="total-time" class="text-2xl font-black text-cyan-400">0s</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30">
+                    <span class="text-xs text-slate-400 block mb-1">Streak tối đa</span>
+                    <span id="max-streak" class="text-2xl font-black text-emerald-400">0</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                <button id="restart-btn" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 hover:opacity-90 text-white font-extrabold rounded-2xl shadow-lg transition-all">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Chơi Lại Bài Thi
+                </button>
+                <button id="toggle-review-btn" class="w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-2xl border border-purple-500/40 transition-all">
+                    <i class="fa-solid fa-list-check mr-2"></i> Xem Lại Đáp Án
+                </button>
+            </div>
+
+            <!-- Review Container -->
+            <div id="review-container" class="hidden text-left space-y-4 max-h-[400px] overflow-y-auto pr-2 border-t border-purple-900/50 pt-6">
+                <!-- Dynamically populated review content -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-4xl mx-auto w-full text-center py-4 text-xs text-slate-400 mt-4">
+        Chương Trình Toán THPT - Chuyên Đề Các Công Thức Lượng Giác
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /*
+         * QUESTION DATASET - 10 QUESTIONS
+         * 3 Nhận biết (1-3)
+         * 5 Thông hiểu (4-8)
+         * 2 Vận dụng (9-10)
+         */
+        const questionsData = [
+            // CÂU 1: NHẬN BIẾT - Công thức cộng
+            {
+                id: 1,
+                level: "Nhận biết",
+                question: "Khẳng định nào sau đây là **đúng** về công thức cộng của hàm số cosin?",
+                options: [
+                    "$\\cos(a - b) = \\cos a \\cos b + \\sin a \\sin b$",
+                    "$\\cos(a - b) = \\cos a \\cos b - \\sin a \\sin b$",
+                    "$\\cos(a - b) = \\sin a \\cos b - \\cos a \\sin b$",
+                    "$\\cos(a - b) = \\cos a \\sin b + \\sin a \\cos b$"
+                ],
+                correct: 0,
+                explanation: "Theo công thức cộng lượng giác cơ bản:\n$$\\cos(a - b) = \\cos a \\cos b + \\sin a \\sin b$$\n$$\\cos(a + b) = \\cos a \\cos b - \\sin a \\sin b$$"
+            },
+            // CÂU 2: NHẬN BIẾT - Công thức nhân đôi
+            {
+                id: 2,
+                level: "Nhận biết",
+                question: "Công thức nào sau đây **không phải** là công thức nhân đôi của $\\cos 2a$?",
+                options: [
+                    "$\\cos 2a = 1 - 2\\cos^2 a$",
+                    "$\\cos 2a = \\cos^2 a - \\sin^2 a$",
+                    "$\\cos 2a = 2\\cos^2 a - 1$",
+                    "$\\cos 2a = 1 - 2\\sin^2 a$"
+                ],
+                correct: 0,
+                explanation: "Ba công thức đúng của $\\cos 2a$ là:\n1. $\\cos 2a = \\cos^2 a - \\sin^2 a$\n2. $\\cos 2a = 2\\cos^2 a - 1$\n3. $\\cos 2a = 1 - 2\\sin^2 a$\n\nPhương án $\\cos 2a = 1 - 2\\cos^2 a$ là sai (chính xác phải là $2\\cos^2 a - 1$)."
+            },
+            // CÂU 3: NHẬN BIẾT - Tổng thành tích
+            {
+                id: 3,
+                level: "Nhận biết",
+                question: "Công thức biến đổi tổng thành tích nào sau đây là **đúng**?",
+                options: [
+                    "$\\cos a + \\cos b = 2\\cos\\left(\\frac{a+b}{2}\\right)\\cos\\left(\\frac{a-b}{2}\\right)$",
+                    "$\\cos a + \\cos b = 2\\sin\\left(\\frac{a+b}{2}\\right)\\cos\\left(\\frac{a-b}{2}\\right)$",
+                    "$\\cos a + \\cos b = -2\\sin\\left(\\frac{a+b}{2}\\right)\\sin\\left(\\frac{a-b}{2}\\right)$",
+                    "$\\cos a + \\cos b = 2\\sin\\left(\\frac{a+b}{2}\\right)\\sin\\left(\\frac{a-b}{2}\\right)$"
+                ],
+                correct: 0,
+                explanation: "Theo công thức biến đổi tổng thành tích:\n$$\\cos a + \\cos b = 2\\cos\\left(\\frac{a+b}{2}\\right)\\cos\\left(\\frac{a-b}{2}\\right)$$"
+            },
+
+            // CÂU 4: THÔNG HIỂU - Tính sin2a khi biết cos a và điều kiện góc
+            {
+                id: 4,
+                level: "Thông hiểu",
+                question: "Cho $\\cos a = -\\frac{3}{5}$ với $\\pi < a < \\frac{3\\pi}{2}$. Tính giá trị của $\\sin 2a$.",
+                options: [
+                    "$\\frac{24}{25}$",
+                    "$-\\frac{24}{25}$",
+                    "$\\frac{12}{25}$",
+                    "$-\\frac{12}{25}$"
+                ],
+                correct: 0,
+                explanation: "Vì $\\pi < a < \\frac{3\\pi}{2}$ (góc phần tư III) nên $\\sin a < 0$.\n$$\\sin a = -\\sqrt{1 - \\cos^2 a} = -\\sqrt{1 - \\left(-\\frac{3}{5}\\right)^2} = -\\sqrt{\\frac{16}{25}} = -\\frac{4}{5}$$\nÁp dụng công thức nhân đôi:\n$$\\sin 2a = 2\\sin a \\cos a = 2 \\cdot \\left(-\\frac{4}{5}\\right) \\cdot \\left(-\\frac{3}{5}\\right) = \\frac{24}{25}$$"
+            },
+            // CÂU 5: THÔNG HIỂU - Tính cos 75 deg không dùng máy tính
+            {
+                id: 5,
+                level: "Thông hiểu",
+                question: "Giá trị chính xác của $\\cos 75^\\circ$ bằng:",
+                options: [
+                    "$\\frac{\\sqrt{6} - \\sqrt{2}}{4}$",
+                    "$\\frac{\\sqrt{6} + \\sqrt{2}}{4}$",
+                    "$\\frac{\\sqrt{3} - 1}{2}$",
+                    "$\\frac{\\sqrt{2} - \\sqrt{6}}{4}$"
+                ],
+                correct: 0,
+                explanation: "Biểu diễn $75^\\circ = 45^\\circ + 30^\\circ$. Áp dụng công thức cộng $\\cos(a+b)$:\n$$\\cos 75^\\circ = \\cos(45^\\circ + 30^\\circ) = \\cos 45^\\circ \\cos 30^\\circ - \\sin 45^\\circ \\sin 30^\\circ$$\n$$= \\frac{\\sqrt{2}}{2} \\cdot \\frac{\\sqrt{3}}{2} - \\frac{\\sqrt{2}}{2} \\cdot \\frac{1}{2} = \\frac{\\sqrt{6} - \\sqrt{2}}{4}$$"
+            },
+            // CÂU 6: THÔNG HIỂU - Rút gọn dùng hạ bậc / nhân đôi
+            {
+                id: 6,
+                level: "Thông hiểu",
+                question: "Rút gọn biểu thức $A = \\frac{1 - \\cos 2x}{\\sin 2x}$ (với điều kiện biểu thức có nghĩa).",
+                options: [
+                    "$\\tan x$",
+                    "$\\cot x$",
+                    "$\\sin x$",
+                    "$\\cos x$"
+                ],
+                correct: 0,
+                explanation: "Sử dụng công thức hạ bậc $1 - \\cos 2x = 2\\sin^2 x$ và công thức nhân đôi $\\sin 2x = 2\\sin x \\cos x$:\n$$A = \\frac{2\\sin^2 x}{2\\sin x \\cos x} = \\frac{\\sin x}{\\cos x} = \\tan x$$"
+            },
+            // CÂU 7: THÔNG HIỂU - Cho tan a = 2, tính biểu thức
+            {
+                id: 7,
+                level: "Thông hiểu",
+                question: "Cho $\\tan a = 2$. Tính giá trị của biểu thức $P = \\frac{\\sin a + 3\\cos a}{\\sin a - \\cos a}$.",
+                options: [
+                    "$5$",
+                    "$3$",
+                    "$-5$",
+                    "$\\frac{5}{3}$"
+                ],
+                correct: 0,
+                explanation: "Chia cả tử và mẫu của $P$ cho $\\cos a \\neq 0$:\n$$P = \\frac{\\frac{\\sin a}{\\cos a} + 3}{\\frac{\\sin a}{\\cos a} - 1} = \\frac{\\tan a + 3}{\\tan a - 1}$$\nThay $\\tan a = 2$ vào:\n$$P = \\frac{2 + 3}{2 - 1} = \\frac{5}{1} = 5$$"
+            },
+            // CÂU 8: THÔNG HIỂU - Biến đổi tích thành tổng
+            {
+                id: 8,
+                level: "Thông hiểu",
+                question: "Tính giá trị của biểu thức $B = \\sin 15^\\circ \\sin 75^\\circ$.",
+                options: [
+                    "$\\frac{1}{4}$",
+                    "$\\frac{1}{2}$",
+                    "$\\frac{\\sqrt{3}}{4}$",
+                    "$\\frac{1}{8}$"
+                ],
+                correct: 0,
+                explanation: "**Cách 1:** Áp dụng biến đổi tích thành tổng $\\sin a \\sin b = \\frac{1}{2}[\\cos(a-b) - \\cos(a+b)]$:\n$$B = \\frac{1}{2}[\\cos(15^\\circ - 75^\\circ) - \\cos(15^\\circ + 75^\\circ)]$$\n$$= \\frac{1}{2}[\\cos(-60^\\circ) - \\cos 90^\\circ] = \\frac{1}{2}\\left(\\frac{1}{2} - 0\\right) = \\frac{1}{4}$$\n**Cách 2:** $\\sin 75^\\circ = \\cos 15^\\circ \\Rightarrow B = \\sin 15^\\circ \\cos 15^\\circ = \\frac{1}{2}\\sin 30^\\circ = \\frac{1}{4}$."
+            },
+
+            // CÂU 9: VẬN DỤNG - Chuỗi tích cosin
+            {
+                id: 9,
+                level: "Vận dụng",
+                question: "Tính giá trị tích chuỗi lượng giác $P = \\cos\\frac{\\pi}{7} \\cdot \\cos\\frac{2\\pi}{7} \\cdot \\cos\\frac{4\\pi}{7}$.",
+                options: [
+                    "$-\\frac{1}{8}$",
+                    "$\\frac{1}{8}$",
+                    "$-\\frac{1}{4}$",
+                    "$\\frac{1}{16}$"
+                ],
+                correct: 0,
+                explanation: "Nhân hai vế của $P$ với $2\\sin\\frac{\\pi}{7} \\neq 0$:\n$$P \\cdot 2\\sin\\frac{\\pi}{7} = \\left(2\\sin\\frac{\\pi}{7}\\cos\\frac{\\pi}{7}\\right) \\cdot \\cos\\frac{2\\pi}{7} \\cdot \\cos\\frac{4\\pi}{7}$$\n$$= \\sin\\frac{2\\pi}{7} \\cdot \\cos\\frac{2\\pi}{7} \\cdot \\cos\\frac{4\\pi}{7}$$\nNhân thêm $2$:\n$$P \\cdot 4\\sin\\frac{\\pi}{7} = \\left(2\\sin\\frac{2\\pi}{7}\\cos\\frac{2\\pi}{7}\\right) \\cdot \\cos\\frac{4\\pi}{7} = \\sin\\frac{4\\pi}{7} \\cdot \\cos\\frac{4\\pi}{7}$$\nNhân thêm $2$:\n$$P \\cdot 8\\sin\\frac{\\pi}{7} = 2\\sin\\frac{4\\pi}{7}\\cos\\frac{4\\pi}{7} = \\sin\\frac{8\\pi}{7}$$\nChú ý: $\\sin\\frac{8\\pi}{7} = \\sin\\left(\\pi + \\frac{\\pi}{7}\\right) = -\\sin\\frac{\\pi}{7}$.\nDo đó: $P \\cdot 8\\sin\\frac{\\pi}{7} = -\\sin\\frac{\\pi}{7} \\Rightarrow P = -\\frac{1}{8}$."
+            },
+            // CÂU 10: VẬN DỤNG - Cho tan a + cot a = 3, tính sin 2a
+            {
+                id: 10,
+                level: "Vận dụng",
+                question: "Cho $\\tan a + \\cot a = 3$. Tính giá trị của $\\sin 2a$.",
+                options: [
+                    "$\\frac{2}{3}$",
+                    "$\\frac{1}{3}$",
+                    "$\\frac{3}{2}$",
+                    "$\\frac{4}{9}$"
+                ],
+                correct: 0,
+                explanation: "Biến đổi $\\tan a + \\cot a$ về $\\sin a, \\cos a$:\n$$\\tan a + \\cot a = \\frac{\\sin a}{\\cos a} + \\frac{\\cos a}{\\sin a} = \\frac{\\sin^2 a + \\cos^2 a}{\\sin a \\cos a} = \\frac{1}{\\sin a \\cos a}$$\nTheo đề bài: $\\frac{1}{\\sin a \\cos a} = 3 \\Rightarrow \\sin a \\cos a = \\frac{1}{3}$.\nÁp dụng công thức nhân đôi $\\sin 2a = 2\\sin a \\cos a$:\n$$\\sin 2a = 2 \\cdot \\frac{1}{3} = \\frac{2}{3}$$"
+            }
+        ];
+
+        // GAME STATE
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let timer = null;
+        let timeLeft = 60;
+        const QUESTION_TIME = 60;
+        let userAnswers = [];
+        let totalTimeSpent = 0;
+        let soundEnabled = true;
+
+        // WEB AUDIO API SYNTHESIZER
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.35); // A2
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                }
+            } catch (e) {
+                console.log("Audio Error:", e);
+            }
+        }
+
+        // DOM ELEMENTS
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const soundToggleBtn = document.getElementById('sound-toggle-btn');
+        const soundIcon = document.getElementById('sound-icon');
+
+        const questionCountEl = document.getElementById('question-count');
+        const difficultyBadgeEl = document.getElementById('difficulty-badge');
+        const streakCountEl = document.getElementById('streak-count');
+        const scoreDisplayEl = document.getElementById('score-display');
+        const timerBarEl = document.getElementById('timer-bar');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const explanationBoxEl = document.getElementById('explanation-box');
+        const explanationContentEl = document.getElementById('explanation-content');
+
+        // EVENT LISTENERS
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        nextBtn.addEventListener('click', loadNextQuestion);
+        
+        soundToggleBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundIcon.className = soundEnabled ? 'fa-solid fa-volume-high text-purple-400' : 'fa-solid fa-volume-xmark text-slate-500';
+        });
+
+        document.getElementById('toggle-review-btn').addEventListener('click', () => {
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.classList.toggle('hidden');
+        });
+
+        // START GAME
+        function startGame() {
+            playSound('click');
+            currentQuestionIdx = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            userAnswers = [];
+            totalTimeSpent = 0;
+
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // RENDER QUESTION
+        function renderQuestion() {
+            const q = questionsData[currentQuestionIdx];
+
+            explanationBoxEl.classList.add('hidden');
+            optionsContainerEl.innerHTML = '';
+            
+            questionCountEl.innerText = `Câu ${currentQuestionIdx + 1}/${questionsData.length}`;
+            difficultyBadgeEl.innerText = q.level;
+            
+            if (q.level === "Nhận biết") {
+                difficultyBadgeEl.className = "px-3 py-1 rounded-xl bg-blue-950/80 border border-blue-500/50 text-blue-300 text-xs font-semibold";
+            } else if (q.level === "Thông hiểu") {
+                difficultyBadgeEl.className = "px-3 py-1 rounded-xl bg-purple-950/80 border border-purple-500/50 text-purple-300 text-xs font-semibold";
+            } else {
+                difficultyBadgeEl.className = "px-3 py-1 rounded-xl bg-pink-950/80 border border-pink-500/50 text-pink-300 text-xs font-semibold";
+            }
+
+            streakCountEl.innerText = streak;
+            scoreDisplayEl.innerText = score;
+
+            questionTextEl.innerHTML = q.question;
+
+            const labels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full p-4 rounded-2xl bg-slate-900/80 border border-purple-500/20 text-left flex items-center space-x-3 text-slate-200 hover:text-white`;
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-purple-950/80 text-pink-400 font-bold flex items-center justify-center shrink-0 border border-purple-500/40">${labels[idx]}</span>
+                    <span class="text-sm md:text-base font-normal leading-normal">${optText}</span>
+                `;
+                btn.onclick = () => handleSelectAnswer(idx);
+                optionsContainerEl.appendChild(btn);
+            });
+
+            // Trigger KaTeX rendering
+            renderMathInElement(quizScreen, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError : false
+            });
+
+            startTimer();
+        }
+
+        // TIMER LOGIC
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = QUESTION_TIME;
+            updateTimerBar();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerBar();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    handleSelectAnswer(-1); // Timeout
+                }
+            }, 1000);
+        }
+
+        function updateTimerBar() {
+            const percentage = (timeLeft / QUESTION_TIME) * 100;
+            timerBarEl.style.width = `${percentage}%`;
+            
+            if (percentage < 30) {
+                timerBarEl.className = "bg-gradient-to-r from-red-500 to-pink-600 h-full transition-all duration-1000 ease-linear";
+            } else {
+                timerBarEl.className = "bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 h-full transition-all duration-1000 ease-linear";
+            }
+        }
+
+        // HANDLE ANSWER SELECTION
+        function handleSelectAnswer(selectedIdx) {
+            clearInterval(timer);
+
+            const q = questionsData[currentQuestionIdx];
+            const optionBtns = optionsContainerEl.querySelectorAll('button');
+            
+            optionBtns.forEach(btn => btn.disabled = true);
+
+            const isCorrect = (selectedIdx === q.correct);
+            const timeTaken = QUESTION_TIME - timeLeft;
+            totalTimeSpent += timeTaken;
+
+            if (isCorrect) {
+                playSound('correct');
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                
+                const timeBonus = Math.floor(timeLeft * 1.5);
+                const streakBonus = streak * 25;
+                const points = 100 + timeBonus + streakBonus;
+                score += points;
+
+                if (selectedIdx >= 0) {
+                    optionBtns[selectedIdx].classList.remove('bg-slate-900/80', 'border-purple-500/20');
+                    optionBtns[selectedIdx].classList.add('bg-emerald-950/90', 'border-emerald-500', 'text-emerald-200');
+                }
+
+                if (streak >= 3) {
+                    confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+                }
+
+            } else {
+                playSound('wrong');
+                streak = 0;
+
+                quizScreen.classList.add('animate-shake');
+                setTimeout(() => quizScreen.classList.remove('animate-shake'), 400);
+
+                if (selectedIdx >= 0) {
+                    optionBtns[selectedIdx].classList.remove('bg-slate-900/80', 'border-purple-500/20');
+                    optionBtns[selectedIdx].classList.add('bg-rose-950/90', 'border-rose-500', 'text-rose-200');
+                }
+
+                optionBtns[q.correct].classList.remove('bg-slate-900/80', 'border-purple-500/20');
+                optionBtns[q.correct].classList.add('bg-emerald-950/90', 'border-emerald-500', 'text-emerald-200');
+            }
+
+            userAnswers.push({
+                questionIdx: currentQuestionIdx,
+                selectedIdx: selectedIdx,
+                isCorrect: isCorrect,
+                timeSpent: timeTaken
+            });
+
+            streakCountEl.innerText = streak;
+            scoreDisplayEl.innerText = score;
+
+            explanationContentEl.innerHTML = q.explanation;
+            explanationBoxEl.classList.remove('hidden');
+
+            renderMathInElement(explanationBoxEl, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError : false
+            });
+        }
+
+        // NEXT QUESTION
+        function loadNextQuestion() {
+            playSound('click');
+            currentQuestionIdx++;
+            if (currentQuestionIdx < questionsData.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // SHOW RESULTS
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const rankTitleEl = document.getElementById('rank-title');
+            
+            if (correctCount === 10) {
+                rankTitleEl.innerText = "Danh hiệu: 🏆 Bậc Thầy Lượng Giác THPT";
+                confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } });
+            } else if (correctCount >= 8) {
+                rankTitleEl.innerText = "Danh hiệu: 🥇 Cao Thủ Công Thức Lượng Giác";
+                confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
+            } else if (correctCount >= 5) {
+                rankTitleEl.innerText = "Danh hiệu: 🥈 Học Sinh Khá Toán Lượng Giác";
+            } else {
+                rankTitleEl.innerText = "Danh hiệu: 🥉 Cần Tăng Cường Luyện Tập";
+            }
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('correct-count').innerText = `${correctCount}/${questionsData.length}`;
+            document.getElementById('total-time').innerText = `${totalTimeSpent}s`;
+            document.getElementById('max-streak').innerText = maxStreak;
+
+            // Populate Review List
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const ans = userAnswers[idx];
+                const labels = ['A', 'B', 'C', 'D'];
+                
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl border ${ans.isCorrect ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-rose-950/20 border-rose-500/40'}`;
+
+                let userAnsText = ans.selectedIdx >= 0 ? `${labels[ans.selectedIdx]}. ${q.options[ans.selectedIdx]}` : "Hết thời gian";
+                let correctAnsText = `${labels[q.correct]}. ${q.options[q.correct]}`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-sm ${ans.isCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                            Câu ${idx + 1} (${q.level}) - ${ans.isCorrect ? 'Đúng' : 'Sai'}
+                        </span>
+                        <span class="text-xs text-slate-400">${ans.timeSpent}s</span>
+                    </div>
+                    <div class="text-sm text-slate-200 mb-2">${q.question}</div>
+                    <div class="text-xs space-y-1 mb-3">
+                        <p class="${ans.isCorrect ? 'text-emerald-300' : 'text-rose-300'}">Bạn chọn: ${userAnsText}</p>
+                        ${!ans.isCorrect ? `<p class="text-emerald-400 font-medium">Đáp án đúng: ${correctAnsText}</p>` : ''}
+                    </div>
+                    <div class="text-xs text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-purple-500/20">
+                        <span class="font-semibold text-pink-400 block mb-1">Lời giải chi tiết:</span>
+                        <div>${q.explanation}</div>
+                    </div>
+                `;
+                reviewContainer.appendChild(card);
+            });
+
+            renderMathInElement(reviewContainer, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError : false
+            });
+        }
+    </script>
+</body>
+</html>
